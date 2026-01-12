@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Check-In — Coming Soon</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      /* Brand */
+      --red:#F81820;
+      --orange:#F88028;
+      --magenta:#F80098;
+
+      /* Ink from brand (dark plum) */
+      --text:#4A1D25;
+      --muted:rgba(74,29,37,.78);
+
+      /* Surfaces */
+      --bg:#FFFFFF;
+      --border:rgba(17,17,17,.14);
+
+      /* Type */
+      --h1: clamp(2.8rem, 5.28vw, 4.4rem); /* -20% */
+      /* Logo: 2x bigger than v10 (as requested) */
+      --logo-h: clamp(546px, calc(var(--h1) * 7.14), 1092px);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:"IBM Plex Sans Hebrew", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      background:#FFFFFF;
+      overflow:hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Ultra subtle grain */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.015;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index:4;
+    }
+
+    /* BUBBLES */
+    .bubble-layer{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+
+    .bubble{
+      position:absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      border-radius: 999px;
+      filter: blur(105px);
+      opacity: 1;
+      will-change: left, top, transform;
+    }
+
+    /* 30% smaller vs v10 (fixed sizes handled by JS as well). */
+    .bubble.red{
+      width: min(650px, 55.0vw);
+      height: min(650px, 55.0vw);
+      background: radial-gradient(circle at 35% 35%,
+        rgba(248, 24, 32, .52),
+        rgba(248, 24, 32, .16) 62%,
+        rgba(248, 24, 32, 0) 100%);
+    }
+
+    .bubble.orange{
+      width: min(725px, 60.0vw);
+      height: min(725px, 60.0vw);
+      background: radial-gradient(circle at 40% 35%,
+        rgba(248, 128, 40, .56),
+        rgba(248, 128, 40, .17) 64%,
+        rgba(248, 128, 40, 0) 100%);
+    }
+
+    .bubble.magenta{
+      width: min(675px, 57.5vw);
+      height: min(675px, 57.5vw);
+      background: radial-gradient(circle at 35% 40%,
+        rgba(248, 0, 152, .56),
+        rgba(248, 0, 152, .20) 62%,
+        rgba(248, 0, 152, 0) 100%);
+    }
+
+    .bubble.neutral{
+      width: min(650px, 55.0vw);
+      height: min(650px, 55.0vw);
+      background: radial-gradient(circle at 40% 40%,
+        rgba(74, 29, 37, .26),
+        rgba(74, 29, 37, .10) 66%,
+        rgba(74, 29, 37, 0) 100%);
+    }
+
+    /* Option 1 layout (centered) */
+    main{
+      position:relative;
+      z-index:2;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 12px;
+      text-align:center;
+    }
+
+    .container{
+      width: min(980px, 100%);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 0px;
+      /* keep text readable even when bubbles pass behind it */
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .logo-img{
+      height: var(--logo-h);
+      width: auto;
+      max-width: min(1125px, 115.0vw);
+      display:block;
+      background:transparent;
+          margin-bottom: -52px;
+    }
+
+    h1{
+      margin: 0;
+      margin-top: -78px; /* closer to logo */
+      margin-bottom: 18px; /* give space to H2 */
+      font-size: var(--h1);
+      font-weight: 700;
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .subtext{
+      margin: 0;
+      margin-top: 0px;
+      font-size: clamp(1.10rem, 1.35vw, 1.28rem);
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 34ch; /* encourage 2 lines */
+      text-align: center;
+      font-weight: 400;
+    }
+
+    
+    .soon{
+      margin: 3.2em 0 0;
+      font-size: clamp(0.82rem, 0.95vw, 0.95rem); /* ~35% smaller than h2 */
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--muted);
+    }
+
+    .soon-link{
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(74,29,37,.25);
+      padding-bottom: 1px;
+    }
+    .soon-link:hover{
+      border-bottom-color: rgba(74,29,37,.55);
+    }
+
+.cta-pill{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 3;
+      margin-top: 4.2em;
+      font-size: 0.62rem; /* small but visible */
+      text-decoration:none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.74);
+      backdrop-filter: blur(10px);
+      white-space: nowrap;
+      direction:ltr;
+      transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+      padding: 8px 12px;
+}
+
+    .cta-pill:hover{
+      border-color: rgba(17,17,17,.22);
+      background: rgba(255,255,255,.88);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 520px){
+      .cta-pill{ white-space: normal; text-align:center; }
+      .logo-img{ max-width: 94vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      body{ overflow:auto; }
+      .bubble-layer{ display:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bubble-layer" aria-hidden="true">
+    <div class="bubble red" id="bRed"></div>
+    <div class="bubble orange" id="bOrange"></div>
+    <div class="bubble magenta" id="bMagenta"></div>
+    <div class="bubble neutral" id="bNeutral"></div>
+  </div>
+
+  <main>
+    <section class="container" aria-label="Check-In coming soon">
+      <img class="logo-img" src="CheckIn_logo_red_CMYK.svg" alt="Check-In" />
+      <h1>Your travels reimagined</h1>
+      <h2 class="subtext">Experience a seamless, personalized<br/>journey from start to finish.</h2>
+      <h3 class="soon">Coming Soon To <a class="soon-link" href="https://checkin-travel.io" target="_blank" rel="noopener">checkin-travel.io</a></h3>
+      <a class="cta-pill" href="mailto:checkin-vendor-sync@checkin-travel.io">
+        Stay Updated: checkin-vendor-sync@checkin-travel.io
+      </a>
+    </section>
+  </main>
+
+  <script>
+    /**
+     * Requested behavior (hard rules):
+     * - 4 bubbles total, always visible.
+     * - On FIRST load: ALL bubbles start behind the LOGO, clustered with <= ~25% overlap.
+     * - Immediately after load: bubbles disperse to different directions and continue drifting.
+     * - Drift loop is continuous and smooth, period = 160 seconds.
+     * - Increase speed another +25% (compared to v12) -> we increase travel distance multiplier.
+     * - Do not overlap more than ~25% at any time (enforced via center distance constraint).
+     */
+    (function () {
+      const prefersReduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReduced) return;
+
+      const PERIOD_MS = 160000; // 160s continuous loop (no jumps)
+      const DISPERSAL_MS = 1800; // time to "explode/disperse" from logo (smooth)
+      const SPEED_MULT = 1.75;   // 1.4x faster vs v18   // +25% faster feel vs v12 (distance multiplier)
+
+      const bubbles = [
+        { el: document.getElementById("bRed"),     key: "red"     },
+        { el: document.getElementById("bOrange"),  key: "orange"  },
+        { el: document.getElementById("bMagenta"), key: "magenta" },
+        { el: document.getElementById("bNeutral"), key: "neutral" },
+      ];
+
+      const logo = document.querySelector(".logo-img");
+
+      function now() { return performance.now(); }
+      function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+      function lerp(a, b, t) { return a + (b - a) * t; }
+      function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+      function getSize(el) {
+        const r = el.getBoundingClientRect();
+        return { w: r.width, h: r.height, r: Math.max(r.width, r.height) / 2 };
+      }
+
+      function setPos(el, x, y) {
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+        el.style.transform = "translate3d(-50%, -50%, 0)";
+      }
+
+      let vw = window.innerWidth;
+      let vh = window.innerHeight;
+
+      function getLogoCenter() {
+        const rect = logo.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      }
+
+      // Target anchors after dispersal (corners-ish + one near center-right)
+      function getTargetBase() {
+        return {
+          red:     { x: 0.16 * vw, y: 0.22 * vh }, // top-left
+          magenta: { x: 0.86 * vw, y: 0.24 * vh }, // top-right
+          neutral: { x: 0.20 * vw, y: 0.84 * vh }, // bottom-left
+          orange:  { x: 0.78 * vw, y: 0.76 * vh }, // bottom-right-ish
+        };
+      }
+
+      // Amplitudes (large, premium drift) — already includes previous v12 scaling; SPEED_MULT adds +25%.
+      function getAmp() {
+        return {
+          red:     { ax: 0.4160 * vw, ay: 0.3200 * vh, px: 0.0, py: 1.2 },
+          magenta: { ax: 0.3840 * vw, ay: 0.3520 * vh, px: 1.7, py: 0.4 },
+          neutral: { ax: 0.3520 * vw, ay: 0.2880 * vh, px: 2.6, py: 1.1 },
+          orange:  { ax: 0.4480 * vw, ay: 0.3200 * vh, px: 0.9, py: 2.2 },
+        };
+      }
+
+      // Cluster positions around logo center (small offsets so they start behind logo, with overlap)
+      function getClusterStart(center) {
+        // Offsets kept small relative to typical bubble radius => overlapping start.
+        return {
+          red:     { x: center.x - 26, y: center.y - 18 },
+          orange:  { x: center.x + 22, y: center.y - 10 },
+          magenta: { x: center.x + 10, y: center.y + 22 },
+          neutral: { x: center.x - 18, y: center.y + 14 },
+        };
+      }
+
+      // Overlap constraint: <= ~25% overlap
+      const minSepFactor = 0.65;
+
+      function enforceSeparation(pts) {
+        for (let iter = 0; iter < 3; iter++) {
+          for (let i = 0; i < pts.length; i++) {
+            for (let j = i + 1; j < pts.length; j++) {
+              const a = pts[i], b = pts[j];
+              const dx = b.x - a.x;
+              const dy = b.y - a.y;
+              const dist = Math.hypot(dx, dy) || 0.0001;
+              const minDist = minSepFactor * (a.r + b.r);
+
+              if (dist < minDist) {
+                const push = (minDist - dist) / 2;
+                const ux = dx / dist;
+                const uy = dy / dist;
+                a.x -= ux * push;
+                a.y -= uy * push;
+                b.x += ux * push;
+                b.y += uy * push;
+              }
+            }
+          }
+        }
+      }
+
+      function keepWithinBounds(p) {
+        const pad = Math.max(p.r * 0.30, 90);
+        p.x = clamp(p.x, -pad, vw + pad);
+        p.y = clamp(p.y, -pad, vh + pad);
+      }
+
+      function resize() {
+        vw = window.innerWidth;
+        vh = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+
+      // Ensure all 4 visible immediately (first paint)
+      resize();
+      bubbles.forEach(b => {
+        b.size = getSize(b.el);
+      });
+      const c0 = getLogoCenter();
+      const cluster0 = getClusterStart(c0);
+      bubbles.forEach(b => setPos(b.el, cluster0[b.key].x, cluster0[b.key].y));
+
+      const t0 = now();
+
+      function step() {
+        const t = now() - t0;
+        const phase = ((t % PERIOD_MS) / PERIOD_MS) * (Math.PI * 2);
+
+        const center = getLogoCenter();
+        const cluster = getClusterStart(center);
+        const baseTarget = getTargetBase();
+        const amp = getAmp();
+
+        // Dispersal interpolation (0 -> 1)
+        const disperseT = easeOutCubic(clamp(t / DISPERSAL_MS, 0, 1));
+
+        // Compute desired positions
+        const pts = bubbles.map(b => {
+          const k = b.key;
+          const s = b.size || getSize(b.el);
+          b.size = s;
+
+          // Start: cluster around logo
+          const sx = cluster[k].x;
+          const sy = cluster[k].y;
+
+          // Target base after dispersal
+          const bx = lerp(sx, baseTarget[k].x, disperseT);
+          const by = lerp(sy, baseTarget[k].y, disperseT);
+
+          // Drift around base (distance multiplier makes it "faster feel")
+          const a = amp[k];
+          let x = bx + (a.ax * SPEED_MULT) * Math.sin(phase + a.px);
+          let y = by + (a.ay * SPEED_MULT) * Math.cos(phase + a.py);
+
+          const p = { key:k, x, y, r:s.r, el:b.el };
+          keepWithinBounds(p);
+          return p;
+        });
+
+        // Enforce overlap rule
+        enforceSeparation(pts);
+        pts.forEach(keepWithinBounds);
+
+        // Apply
+        for (const p of pts) setPos(p.el, p.x, p.y);
+
+        requestAnimationFrame(step);
+      }
+
+      requestAnimationFrame(step);
+    })();
+  </script>
+</body>
+</html>
