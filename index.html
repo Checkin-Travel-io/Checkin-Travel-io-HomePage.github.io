@@ -38,7 +38,8 @@
       font-family:"IBM Plex Sans Hebrew", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       color:var(--text);
       background:#FFFFFF;
-      overflow:hidden;
+      overflow-x:hidden;
+      overflow-y:auto;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -157,7 +158,7 @@
     .subtext{
       margin: 0;
       margin-top: 0px;
-      font-size: clamp(1.10rem, 1.35vw, 1.28rem);
+      font-size: clamp(1.38rem, 1.69vw, 1.60rem);
       line-height: 1.45;
       color: var(--muted);
       max-width: 34ch; /* encourage 2 lines */
@@ -210,8 +211,121 @@
       background: rgba(255,255,255,.88);
       transform: translateY(-1px);
     }
+    .topbar{
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .logo-mini{
+      height: 28px;
+      width: auto;
+      flex: 0 0 auto;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,.08));
+    }
+
+    .brand-name{
+      font-weight: 750;
+      color: var(--text);
+      letter-spacing: .2px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 45vw;
+    }
+
+    .top-links{
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .top-links a{
+      color: var(--text);
+      text-decoration:none;
+      border-bottom: 1px solid rgba(74,29,37,.25);
+      padding-bottom: 1px;
+      font-size: .95rem;
+    }
+    .top-links a:hover{ border-bottom-color: rgba(74,29,37,.55); }
+
+    .info{
+      margin-top: 18px;
+      max-width: 62ch;
+      color: var(--muted);
+      font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .info .info-text{
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .info strong{ color: var(--text); font-weight: 650; }
+
+    .info .info-sub{
+      color: var(--muted);
+      font-weight: 550;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    footer.site-footer{
+      margin-top: 2.4em;
+      font-size: 0.82rem;
+      color: rgba(74,29,37,.70);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      text-align: center;
+    }
+
+    footer.site-footer .footer-line{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    footer.site-footer a{
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(74,29,37,.25);
+      padding-bottom: 1px;
+    }
+
+    footer.site-footer a:hover{
+      border-bottom-color: rgba(74,29,37,.55);
+    }
+
+    footer.site-footer .sep{
+      opacity: .55;
+    }
+
+
 
     @media (max-width: 520px){
+      h1{ white-space: normal; }
+      .topbar{ flex-direction: column; }
+      .brand-name{ max-width: 90vw; }
+      .container{ padding-bottom: 42px; }
+
       .cta-pill{ white-space: normal; text-align:center; }
       .logo-img{ max-width: 94vw; }
     }
@@ -233,14 +347,44 @@
 
   <main>
     <section class="container" aria-label="Check-In coming soon">
-      <img class="logo-img" src="CheckIn_logo_red_CMYK.svg" alt="Check-In" />
+            <header class="topbar" aria-label="Header">
+        <div class="brand">
+          <img class="logo-mini" src="CheckIn_logo_red_CMYK.svg" alt="Checkin Travel" />
+          <span class="brand-name">Checkin Travel</span>
+        </div>
+        <nav class="top-links" aria-label="Legal links">
+          <a href="./privacy.html">Privacy</a>
+          <a href="./terms.html">Terms</a>
+        </nav>
+      </header>
+<img class="logo-img" src="CheckIn_logo_red_CMYK.svg" alt="Check-In" />
       <h1>Your travels reimagined</h1>
       <h2 class="subtext">Experience a seamless, personalized<br/>journey from start to finish.</h2>
-      <h3 class="soon">Coming Soon To <a class="soon-link" href="https://checkin-travel.io" target="_blank" rel="noopener">checkin-travel.io</a></h3>
-      <a class="cta-pill" href="mailto:checkin-vendor-sync@checkin-travel.io">
-        Stay Updated: checkin-vendor-sync@checkin-travel.io
-      </a>
-    </section>
+            <div class="info" aria-label="Company summary">
+        <p class="info-text">
+          <strong>Checkin Travel</strong> is building a travel technology platform that streamlines booking and trip workflows.<br/>
+          <span class="info-sub">Currently in stealth.</span>
+        </p>
+      </div>
+<h3 class="soon">Coming Soon</h3>
+      <footer class="site-footer" aria-label="Footer">
+        <div class="footer-line">
+          <span>Based in Tel Aviv, Israel</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>Contact: <a href="mailto:omeral@checkin-travel.io">omeral@checkin-travel.io</a></span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>Company profile: <a href="https://www.linkedin.com/company/110755353/" target="_blank" rel="noopener">LinkedIn</a></span>
+        </div>
+
+        <div class="footer-line">
+          <span>© 2026 Checkin Travel</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <a href="./privacy.html">Privacy Policy</a>
+          <span class="sep" aria-hidden="true">|</span>
+          <a href="./terms.html">Terms</a>
+        </div>
+      </footer>
+</section>
   </main>
 
   <script>
